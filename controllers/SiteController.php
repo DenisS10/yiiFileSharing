@@ -2,13 +2,12 @@
 
 namespace app\controllers;
 
-use app\models\Users;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\Response;
 use yii\filters\VerbFilter;
-use app\models\LoginForm1;
+use app\models\LoginForm;
 use app\models\ContactForm;
 
 class SiteController extends Controller
@@ -62,15 +61,11 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-//        Users::findByLogin('www');
-//        exit();
-//        Users::getLoginById(76);
-//        Users::getPassById(76);
         return $this->render('index');
     }
 
     /**
-     * LoginForm1 action.
+     * Login action.
      *
      * @return Response|string
      */
@@ -80,7 +75,7 @@ class SiteController extends Controller
             return $this->goHome();
         }
 
-        $model = new LoginForm1();
+        $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
             return $this->goBack();
         }
@@ -130,5 +125,4 @@ class SiteController extends Controller
     {
         return $this->render('about');
     }
-
 }

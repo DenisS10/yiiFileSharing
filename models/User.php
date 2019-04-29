@@ -2,10 +2,7 @@
 
 namespace app\models;
 
-use yii\base\BaseObject;
-use yii\web\IdentityInterface;
-
-class User extends BaseObject implements IdentityInterface
+class User extends \yii\base\BaseObject implements \yii\web\IdentityInterface
 {
     public $id;
     public $username;
@@ -13,23 +10,22 @@ class User extends BaseObject implements IdentityInterface
     public $authKey;
     public $accessToken;
 
-//    private static $users = [
-//        '100' => [
-//            'id' => '100',
-//            'username' => 'admin',
-//            'password' => 'admin',
-//            'authKey' => 'test100key',
-//            'accessToken' => '100-token',
-//        ],
-//        '101' => [
-//            'id' => '101',
-//            'username' => 'demo',
-//            'password' => 'demo',
-//            'authKey' => 'test101key',
-//            'accessToken' => '101-token',
-//        ],
-//    ];
-
+    private static $users = [
+        '100' => [
+            'id' => '100',
+            'username' => 'admin',
+            'password' => 'admin',
+            'authKey' => 'test100key',
+            'accessToken' => '100-token',
+        ],
+        '101' => [
+            'id' => '101',
+            'username' => 'demo',
+            'password' => 'demo',
+            'authKey' => 'test101key',
+            'accessToken' => '101-token',
+        ],
+    ];
 
 
     /**
@@ -38,22 +34,6 @@ class User extends BaseObject implements IdentityInterface
     public static function findIdentity($id)
     {
         return isset(self::$users[$id]) ? new static(self::$users[$id]) : null;
-    }
-
-
-    /**
-     * @param $login
-     * @param $pass
-     * @return string
-     */
-    public static function dbUserSave($login, $pass)
-    {
-        $newUser = new Users();
-        $newUser->login=$login;
-        $newUser->password=$pass;
-        $newUser->save();
-
-        return 'Вы успешно зарегистрировались в системе';
     }
 
     /**
@@ -78,11 +58,11 @@ class User extends BaseObject implements IdentityInterface
      */
     public static function findByUsername($username)
     {
-            $user = Users::findByLogin($username);
-            if (strcasecmp($user->login, $username) === 0) {
+        foreach (self::$users as $user) {
+            if (strcasecmp($user['username'], $username) === 0) {
                 return new static($user);
             }
-
+        }
 
         return null;
     }
