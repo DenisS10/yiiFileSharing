@@ -33,7 +33,7 @@ class AuthController extends Controller
                         Yii::$app->session->set('id', $_user->id);
                         Yii::$app->session->set('auth', 'ok');
                     }
-                    $this->redirect("/file/view");
+                    $this->redirect("/file/upload");
                 }
             } else
                 Yii::$app->session->setFlash('error', 'Ошибка');

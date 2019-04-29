@@ -24,23 +24,25 @@ class FileController extends Controller
     public function actionUpload()
     {
         $model = new UploadForm();
-
+       // $paths = __DIR__.'../file_dump'
 
         if (isset($_FILES['UploadForm'])) {
             $name = md5(time() . rand(1, 1000) . $_FILES['UploadForm']['name']['userFile']);
             $key = $name[0] . $name[1] . $name[2] . $name[3] . $name[4] . $name[5] . $name[6] . $name[7];
             Yii::$app->session->open();
             Yii::$app->session->set('keyLink', $key);
-            echo '<pre>';
-            print_r($_FILES['UploadForm']['name']['userFile']);
-            exit();
 
-            $ext = explode('.', $_FILES['userFile']['name']);
+
+            $ext = explode('.', $_FILES['UploadForm']['name']['userFile']);
+
             $ext = $ext[count($ext) - 1];
-            $pathOld = '/../file_dump/' . $name[0] . '/' . $name[1] . '/';//;
+
+            $pathOld = '../file_dump/' . $name[0] . '/' . $name[1] . '/';//;
 
             $path = str_replace('\\', '/', $pathOld);
+
             $link = $path . $name;
+
             //$this->Files->uploadFile($link, $key, $ext);
             $newFile = new Files();
             $newFile->user_id = Yii::$app->session->get('id');
@@ -48,8 +50,9 @@ class FileController extends Controller
             $newFile->file_link = $link;
             $newFile->extension = $ext;
             $newFile->creation_date = time();
-            $newFile->comment = '';
+            $newFile->comment = 'No Comment';
             $newFile->save();
+
             if (!file_exists($path)) {
                 mkdir($path, 0777, true);
             }

@@ -20,6 +20,14 @@ class UploadForm extends Model
         ];
     }
 
+    public function attributeLabels()
+    {
+        return [
+            'userFile' => 'Enter you file',
+
+        ];
+    }
+
     public function upload()
     {
 //        $this->load->view('header');
