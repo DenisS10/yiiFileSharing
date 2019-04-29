@@ -10,6 +10,7 @@ namespace app\controllers;
 
 
 use app\models\LoginForm;
+use app\models\MyAccountForm;
 use app\models\SignupForm;
 use app\models\Users;
 use Yii;
@@ -22,7 +23,7 @@ class AuthController extends Controller
         // if (!Yii::$app->session->get('auth') || Yii::$app->session->get('auth') != 'ok')
         //$this->redirect('login');
         $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post()) ) {
+        if ($model->load(Yii::$app->request->post())) {
             if ($model->validate()) {
                 $_user = Users::findByLogin($model->username);
                 if ($_user->login == $model->username && password_verify($model->password, $_user->password) == true) {
@@ -66,6 +67,26 @@ class AuthController extends Controller
             'model' => $model,
         ]);
 
+    }
+
+    public function actionMyaccount()
+    {
+        $currUser = Users::getUserBySessionId();
+        $model = new MyAccountForm();
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            if (password_verify($model->oldPass, $currUser->password) == true) {
+                if ($model->newPass === $model->repeatNewPass) {
+                    $_password = password_hash($model->repeatNewPass, PASSWORD_DEFAULT);
+                    $currUser->password = $_password;
+                    $currUser->mod_time = time();
+                    $currUser->save();
+                    //echo 'password = '.$currUser->password;
+                }
+            }
+        }
+        return $this->render('myAccount', [
+            'model' => $model,
+        ]);
     }
 
     public function actionLogout()
