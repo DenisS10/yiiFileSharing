@@ -3,8 +3,6 @@
 namespace app\models;
 
 use Yii;
-use yii\db\ActiveQuery;
-use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "users".
@@ -15,9 +13,8 @@ use yii\db\ActiveRecord;
  * @property int $first_time
  *
  * @property Files[] $files
- * @property int $mod_time [int(10)]
  */
-class Users extends ActiveRecord
+class Users extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -54,32 +51,21 @@ class Users extends ActiveRecord
     }
 
     /**
-     * @return ActiveQuery
+     * @return \yii\db\ActiveQuery
      */
     public function getFiles()
     {
         return $this->hasMany(Files::className(), ['user_id' => 'id']);
     }
 
-    /**
-     * @return array|ActiveRecord[]
-     */
-    public static function getFilesBySessionId()
-    {
-        $id = Yii::$app->session->get('id');
-        return Users::find()->andWhere(['id' => $id])->all();
-    }
-
-    /**
-     * @return array|null|ActiveRecord
-     */
     public static function getUserBySessionId()
     {
         $id = Yii::$app->session->get('id');
         return Users::find()->andWhere(['id' => $id])->one();
     }
+
     public static function findByLogin($login)
     {
-        return Users::find()->andWhere(['login' => $login])->all()[0];
+        return Users::find()->andWhere(['login' => $login])->one();
     }
 }
