@@ -23,8 +23,10 @@ class FileController extends Controller
 
     public function actionUpload()
     {
+
+
         $model = new UploadForm();
-       // $paths = __DIR__.'../file_dump'
+        // $paths = __DIR__.'../file_dump'
 
         if (isset($_FILES['UploadForm'])) {
             $name = md5(time() . rand(1, 1000) . $_FILES['UploadForm']['name']['userFile']);
@@ -69,31 +71,33 @@ class FileController extends Controller
         return $this->render('upload', ['model' => $model]);
 
     }
-        public
-        function actionDownload($key)
-        {
-            $saveFile = Files::find()->andWhere(['file_key' => $key])->one();
-            // $file_key = $this->input->post('file_key');
-            //$this->Files->downloadFile($file_key);
-            //if (file_exists($key)) {
 
-            //exit();
-            //echo 'isset($_POST[\'file_key\']';
-            // сбрасываем буфер вывода PHP, чтобы избежать переполнения памяти выделенной под скрипт
-            // если этого не сделать файл будет читаться в память полностью!
-            if (ob_get_level()) {
-                ob_end_clean();
-            }
-            // заставляем браузер показать окно сохранения файла
-            header('Content-Description: File Transfer');
-            header('Content-Type: application/octet-stream');
-            header('Content-Disposition: attachment; filename=' . basename($saveFile->file_key));
-            header('Content-Transfer-Encoding: binary');
-            header('Expires: 0');
-            header('Cache-Control: must-revalidate');
-            header('Pragma: public');
-            header('Content-Length: ' . filesize($saveFile->file_link));
-            // читаем файл и отправляем его пользователю
-            readfile($saveFile->file_link);
-        }
+    public function actionDownload($key)
+    {
+        $saveFile = Files::find()->andWhere(['file_key' => $key])->one();
+        return Yii::$app->response->sendFile($saveFile->file_link);
+//            // $file_key = $this->input->post('file_key');
+//            //$this->Files->downloadFile($file_key);
+//            //if (file_exists($key)) {
+//
+//            //exit();
+//            //echo 'isset($_POST[\'file_key\']';
+//            // сбрасываем буфер вывода PHP, чтобы избежать переполнения памяти выделенной под скрипт
+//            // если этого не сделать файл будет читаться в память полностью!
+//            if (ob_get_level()) {
+//                ob_end_clean();
+//            }
+//            // заставляем браузер показать окно сохранения файла
+//            header('Content-Description: File Transfer');
+//            header('Content-Type: application/octet-stream');
+//            header('Content-Disposition: attachment; filename=' . basename($saveFile->file_key));
+//            header('Content-Transfer-Encoding: binary');
+//            header('Expires: 0');
+//            header('Cache-Control: must-revalidate');
+//            header('Pragma: public');
+//            header('Content-Length: ' . filesize($saveFile->file_link));
+//            // читаем файл и отправляем его пользователю
+//            readfile($saveFile->file_link);
+
     }
+}

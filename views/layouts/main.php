@@ -38,7 +38,8 @@ AppAsset::register($this);
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => [
-            ['label' => 'Upload file', 'url' => ['/files/upload']],
+            ['label' => 'Upload file', 'url' => ['/file/upload']],
+            ['label' => 'Download file', 'url' => ['/file/download']],
             ['label' => 'My Account', 'url' => ['/auth/myaccount']],
             ['label' => 'Sign Up', 'url' => ['/auth/signup']],
 
