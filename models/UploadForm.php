@@ -11,12 +11,12 @@ class UploadForm extends Model
     /**
      * @var UploadedFile
      */
-    public $file;
+    public $userFile;
 
     public function rules()
     {
         return [
-            [['imageFile'], 'file', 'skipOnEmpty' => false, 'extensions' => 'png, jpg'],
+            [['userFile'], 'file', 'skipOnEmpty' => false,],
         ];
     }
 
