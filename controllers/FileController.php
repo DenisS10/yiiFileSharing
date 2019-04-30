@@ -16,11 +16,6 @@ use yii\web\Controller;
 
 class FileController extends Controller
 {
-    public function actionView()
-    {
-
-    }
-
     public function actionUpload()
     {
 
@@ -46,14 +41,7 @@ class FileController extends Controller
             $link = $path . $name;
 
             //$this->Files->uploadFile($link, $key, $ext);
-            $newFile = new Files();
-            $newFile->user_id = Yii::$app->session->get('id');
-            $newFile->file_key = $key;
-            $newFile->file_link = $link;
-            $newFile->extension = $ext;
-            $newFile->creation_date = time();
-            $newFile->comment = 'No Comment';
-            $newFile->save();
+
 
             if (!file_exists($path)) {
                 mkdir($path, 0777, true);
@@ -62,8 +50,18 @@ class FileController extends Controller
                 header('location: index');
                 exit();
             }
-            move_uploaded_file($_FILES['UploadForm']['tmp_name']['userFile'], $path . '/' . $name . '.' . $ext);
-
+            move_uploaded_file($_FILES['UploadForm']['tmp_name']['userFile'],
+                $path . '/' . $name . '.' . $ext);
+            if(file_exists($path)) {
+                $newFile = new Files();
+                $newFile->user_id = Yii::$app->session->get('id');
+                $newFile->file_key = $key;
+                $newFile->file_link = $link;
+                $newFile->extension = $ext;
+                $newFile->creation_date = time();
+                $newFile->file_name = $_FILES['UploadForm']['name']['userFile'];
+                $newFile->save();
+            }
 //            if (isset($_POST['file_key']))
 //                header('location: index.php/File/download');
 
@@ -72,32 +70,30 @@ class FileController extends Controller
 
     }
 
+    public function actionView()
+    {
+        $id = Yii::$app->session->get('id');
+        $fileArr = Files::find()->andWhere(['user_id' => $id])->all();
+
+
+        return $this->render('viewfiles', ['fileArr' => $fileArr]);
+    }
+
     public function actionDownload($key)
     {
+
         $saveFile = Files::find()->andWhere(['file_key' => $key])->one();
-        return Yii::$app->response->sendFile($saveFile->file_link);
-//            // $file_key = $this->input->post('file_key');
-//            //$this->Files->downloadFile($file_key);
-//            //if (file_exists($key)) {
-//
-//            //exit();
-//            //echo 'isset($_POST[\'file_key\']';
-//            // сбрасываем буфер вывода PHP, чтобы избежать переполнения памяти выделенной под скрипт
-//            // если этого не сделать файл будет читаться в память полностью!
-//            if (ob_get_level()) {
-//                ob_end_clean();
-//            }
-//            // заставляем браузер показать окно сохранения файла
-//            header('Content-Description: File Transfer');
-//            header('Content-Type: application/octet-stream');
-//            header('Content-Disposition: attachment; filename=' . basename($saveFile->file_key));
-//            header('Content-Transfer-Encoding: binary');
-//            header('Expires: 0');
-//            header('Cache-Control: must-revalidate');
-//            header('Pragma: public');
-//            header('Content-Length: ' . filesize($saveFile->file_link));
-//            // читаем файл и отправляем его пользователю
-//            readfile($saveFile->file_link);
+        $pathOld = __DIR__ . '/' . $saveFile->file_link . '.' . $saveFile->extension;
+        $path = str_replace('\\', '/', $pathOld);
+        if (file_exists($path))
+            return \Yii::$app->response->sendFile($path);
+        else {
+
+            $delNotExistsFile = Files::find()->andWhere(['file_key' => $key])->one();
+            $delNotExistsFile->delete();
+            return $this->redirect('/file/view');
+        }
+
 
     }
 }
