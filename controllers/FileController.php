@@ -81,19 +81,20 @@ class FileController extends Controller
 
     public function actionDownload($key)
     {
-
         $saveFile = Files::find()->andWhere(['file_key' => $key])->one();
-        $pathOld = __DIR__ . '/' . $saveFile->file_link . '.' . $saveFile->extension;
-        $path = str_replace('\\', '/', $pathOld);
-        if (file_exists($path))
-            return \Yii::$app->response->sendFile($path);
-        else {
+        if($saveFile != null) {
+            $pathOld = __DIR__ . '/' . $saveFile->file_link . '.' . $saveFile->extension;
+            $path = str_replace('\\', '/', $pathOld);
 
-            $delNotExistsFile = Files::find()->andWhere(['file_key' => $key])->one();
-            $delNotExistsFile->delete();
-            return $this->redirect('/file/view');
+            if (file_exists($path))
+                return \Yii::$app->response->sendFile($path);
+            else {
+
+                $delNotExistsFile = Files::find()->andWhere(['file_key' => $key])->one();
+                $delNotExistsFile->delete();
+                return $this->redirect('/file/view');
+            }
         }
-
 
     }
 }
